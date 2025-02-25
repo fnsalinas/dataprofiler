@@ -26,6 +26,11 @@ DataProfiler es una herramienta para analizar y perfilar datos de manera eficien
     pip install -r requirements.txt
     ```
 
+4. Instala el proyecto:
+    ```bash
+    pip install -e .
+    ```
+
 ## Configuración
 
 Para configurar el proyecto, necesitas crear un archivo `.env` en el directorio raíz del proyecto. Este archivo debe contener las siguientes variables de entorno:
