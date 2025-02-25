@@ -43,10 +43,22 @@ def process_profiling(profile_request: ProfileRequest):
             raise ValueError("El DataFrame está vacío. Verifique la consulta SQL.")
 
         # Ejecutar el perfilado
-        run_profiling(df, profile_request.profile_name)
+        profiling_message = run_profiling(df, profile_request.profile_name)
 
         logger.info(f"Perfil generado exitosamente para {profile_request.profile_name}")
-        return f"Perfil generado correctamente para {profile_request.profile_name}"
+        
+        message = {
+            "message": f"Perfil generado correctamente para {profile_request.profile_name}",
+            "profile_name": profile_request.profile_name,
+            "sql_filename": profile_request.sql_filename,
+            "columns": df.columns.tolist(),
+            "rows": df.shape[0],
+            "columns_count": df.shape[1],
+            "profile_path": f"/app/profiles/{profile_request.profile_name}.html",
+            "profiling_message": profiling_message
+        }
+        
+        return message
 
     except FileNotFoundError:
         logger.error(f"Archivo SQL '{profile_request.sql_filename}' no encontrado.")

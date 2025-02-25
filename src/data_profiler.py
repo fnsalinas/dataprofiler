@@ -72,7 +72,7 @@ def get_df(sql_filename: str) -> pd.DataFrame:
         logger.error(f"Error al obtener el DataFrame desde la base de datos: {e}")
         raise Exception(f"Error al obtener el DataFrame desde la base de datos: {e}")
 
-def run_profiling(df: pd.DataFrame, profile_name: str) -> None:
+def run_profiling(df: pd.DataFrame, profile_name: str) -> Dict[str, Any]:
     """
     Genera un informe de perfilado de datos y lo guarda en formatos HTML, JSON y CSV.
     Luego, sube estos archivos a un bucket de S3.
@@ -112,4 +112,16 @@ def run_profiling(df: pd.DataFrame, profile_name: str) -> None:
     s3_manager.upload_file(html_filepath, BUCKET_NAME, f"profiling/{actual_datetime}_{profile_name}.html")
     s3_manager.upload_file(json_filepath, BUCKET_NAME, f"profiling/{actual_datetime}_{profile_name}.json")
     s3_manager.upload_file(csv_filepath, BUCKET_NAME, f"profiling/{actual_datetime}_{profile_name}.csv")
-
+    
+    message: Dict[str, Any] = {
+        "REGIÓN": REGION_NAME,
+        "BUCKET_NAME": BUCKET_NAME,
+        "HTML path": f"s3://{BUCKET_NAME}/profiling/{actual_datetime}_{profile_name}.html",
+        "JSON path": f"s3://{BUCKET_NAME}/profiling/{actual_datetime}_{profile_name}.json",
+        "CSV path": f"s3://{BUCKET_NAME}/profiling/{actual_datetime}_{profile_name}.csv"
+        }
+    
+    logger.info(f"Perfil generado exitosamente para {profile_name}.")
+    logger.info(f"Rutas de los archivos generados: {message}")
+    
+    return message
